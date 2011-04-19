@@ -8,5 +8,6 @@ The videos will be sent from the /videos directory that was not included
 in the repository because of its size. 
 Also the player is expecting webm formatting at the moment but that can
 be changed later. 
+
     mkdir videos
     cp <some_path_to_video_files> videos/
