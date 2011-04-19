@@ -11,3 +11,10 @@ be changed later.
 
     mkdir videos
     cp <some_path_to_video_files> videos/
+
+
+#REST API
+The service will be accessible via a simple rest api.
+To request a video simple make a HTTP 'GET' request to:
+
+    "/video?name=<the name of the video you want>"
