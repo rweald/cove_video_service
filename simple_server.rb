@@ -37,10 +37,9 @@ end
 # E.X// '/video?name=demo.webm&token=a;ldkjfa;fk'
 get '/video' do
   unless valid_token(params[:token], params[:name])
-    response.status == 403
-    return {"status" => "failed", "notice" => "Invlid token"}
+    response.status = 403
+    return {"status" => "failed", "notice" => "Invalid token"}.to_json
   end
-
   send_file File.join(File.dirname(__FILE__), "videos", params[:name])
 end
 
@@ -48,16 +47,23 @@ end
 # so we can check for token validity later. 
 def generate_token(video_name)
   token = OpenSSL::BN.rand(2*16).to_s(16)
-  DB.set(token, video_name)
+  begin
+    DB.set(token, video_name)
+  rescue
+    raise "problem persisting token to memcache"
+  end
   return token
 end
 
 #queries the db to determin whether the given token is valid 
 #and matches the given video name
 def valid_token(token, video_name)
+  return false unless token && video_name
+
   value = DB.get(token)
-  unless value && value == video_name
+  if value && value == video_name
+    return true 
+  else
     return false
   end
-  return true
 end
