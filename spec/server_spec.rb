@@ -50,7 +50,7 @@ describe "SimpleServer" do
     end
     context 'invalid token' do
       before(:each) do
-        get '/video'
+        get '/video/something.m4v'
       end
       it 'should respond with 403' do
         last_response.status.should == 403
@@ -63,12 +63,14 @@ describe "SimpleServer" do
     context 'valid token' do
       it "should respond with 200 if video found" do
         token = get_token("videoplayback.webm")
-        get '/video', :name => "videoplayback.webm", :token => token
+        puts token
+        puts "/#{token}/videoplayback.webm"
+        get "#{token}/videoplayback.webm"
         last_response.status.should == 200
       end
       it 'should return 404 if video not found' do 
-        token = get_token("helloworld")
-        get '/video', :name => "helloworld", :token => token
+        token = get_token("helloworld.m4v")
+        get "#{token}/wierd_File_name.m4v"
         last_response.status.should == 404
       end
     end
