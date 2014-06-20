@@ -34,15 +34,19 @@ end
 
 # Executes a sendfile with the video if the given token is valid.
 # Require both token and video as parameters
-# E.X// '/video?name=demo.webm&token=a;ldkjfa;fk'
-get '/video' do
-  unless valid_token(params[:token], params[:name])
+# E.X// '/<token>/<filename>.<extension>
+get '/:token/:name.:extension' do
+  unless valid_token(params[:token], "#{params[:name]}.#{params[:extension]}")
     response.status = 403
     return {"status" => "failed", "notice" => "Invalid token"}.to_json
   end
-  send_file File.join(File.dirname(__FILE__), "videos", params[:name])
+  send_file File.join(File.dirname(__FILE__), "videos", "#{params[:name]}.#{params[:extension]}")
 end
 
+
+get '/test_video.m4v' do
+  send_file File.join(File.dirname(__FILE__), 'videos', 'test.m4v')
+end
 # Generate the secure random token and store it in the db 
 # so we can check for token validity later. 
 def generate_token(video_name)
